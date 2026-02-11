@@ -1,0 +1,7 @@
+python >= 3.8
+simple_term_menu
+
+# 打包工具（可选）
+# pyinstaller>=5.0
+# nuitka>=1.0
+# cx_Freeze>=6.0
