@@ -7,10 +7,8 @@ class Player:
     def __init__(self,cards:List[card]):
         self.cards=cards
     def printc(self):
-        s = 0
-        for i in self.cards:
-            s += 1
-            print(f"{s}.  {i}{i.info()}", end='')
+        for idx, c in enumerate(self.cards):
+            print(f"{idx}.  {c}{c.info()}", end='')
             print()  # 每张牌后换行
     
     def affordable_ftl(self, last_play: csftl) -> bool:

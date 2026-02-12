@@ -198,6 +198,10 @@ class AppIO:
         '''应用 -> 核心: 从应用层接收消息'''
         raise NotImplementedError("Subclasses must implement msg_atc()")
 
+def sort_cards(cards):
+    """按斗地主点数从大到小排序手牌"""
+    return sorted(cards, key=get_card_rank, reverse=True)
+
 def run(app:AppIO):
     pcnt = app.pcnt
     ccnt = app.ccnt
@@ -237,7 +241,9 @@ def run(app:AppIO):
         end = start + cpp
         player_cards = cardset[start:end]
         if i == landlord_idx:
-            player_cards+=cardset[-3:] # 地主获得底牌
+            player_cards += cardset[-3:] # 地主获得底牌
+        # 整理手牌：按点数从大到小排序
+        player_cards = sort_cards(player_cards)
         playerset.append(player(player_cards))
     app.msg_cta({
         'type':'start_game'
@@ -352,6 +358,9 @@ def run(app:AppIO):
                 # 从手牌中移除出的牌（按索引从大到小删除，避免索引错乱）
                 for idx in sorted(card_indices, reverse=True):
                     playerset[i].cards.pop(idx)
+                
+                # 出牌后重新整理手牌
+                playerset[i].cards = sort_cards(playerset[i].cards)
                 
                 last_cards = ocset
                 consecutive_passes = 0
