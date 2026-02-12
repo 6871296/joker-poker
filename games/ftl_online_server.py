@@ -1,4 +1,3 @@
-import socket
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -8,7 +7,7 @@ from lib.cardclass import Card as card
 from lib.cardset_class import Cardset_ftl as cset
 from lib.cardset_class import Cardset_type_ftl as cstype
 from core.FTLCore import run as core_run
-from core.FTLCore import AppIO, get_card_rank, get_main_rank, can_beat
+from core.FTLCore import AppIO,can_beat
 import random
 import threading
 

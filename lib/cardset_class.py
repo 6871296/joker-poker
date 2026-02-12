@@ -1,7 +1,6 @@
 from .cardclass import Card as card
 from typing import List
 from enum import Enum as enum
-from math import floor
 
 class Cardset_type_ftl(enum):
     UNPLAYABLE=0

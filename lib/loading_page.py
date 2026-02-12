@@ -1,6 +1,5 @@
 #废稿
 from dice import *
-from threading import Thread
 from time import sleep
 def random_card():
     print('\033[0m',end='')

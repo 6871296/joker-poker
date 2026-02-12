@@ -1,5 +1,3 @@
-/.venv
-/BUILD.md
-/__pycache__
-/build_nuitka.py
-/test_online_game.py
+*/__pycache__
+*/.DS_Store
+*/*.pyc
