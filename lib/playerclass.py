@@ -31,16 +31,16 @@ class Player:
         if last_type == cstftl.UNPLAYABLE:
             return False  # 上一手牌不合法，无法比较
         
-        # 获取牌的点数（用于比较大小）
+        # 获取牌的点数（用于比较大小）- 使用与_cardset_class一致的斗地主点数
         def get_rank_value(c):
-            """获取牌的点数数值，越大越强"""
+            """获取牌的斗地主点数数值，越大越强"""
             code = ord(str(c))
             if code == 0x1f0cf:
                 return 17  # 大王（红色）
             if code == 0x1f0df:
                 return 16  # 小王（黑色）
             rank = code & 0x0f
-            # 斗地主点数：2最大，然后是A、K...3最小
+            # 斗地主点数：2最大(15)，然后是A(14)、K(13)...3(3)最小
             if rank == 0x02:
                 return 15  # 2
             elif rank == 0x01:
@@ -53,8 +53,10 @@ class Player:
                 return 11  # J
             elif rank == 0x0a:
                 return 10  # 10
-            else:
+            elif rank >= 0x03 and rank <= 0x09:
                 return rank  # 3-9
+            else:
+                return rank
         
         # 判断是否为炸弹（4张相同点数的牌，非王）
         def is_bomb(cs):

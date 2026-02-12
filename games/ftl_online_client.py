@@ -152,11 +152,21 @@ class FTLClient:
             self.game_started = True
         
         elif cmd == 'game_start':
-            self.landlord_id = int(parts[1])
-            if self.landlord_id == self.player_id:
-                print('\033[0;1;33m\nYou are the LANDLORD!\033[0m')
-            else:
-                print(f'\033[0;33m\nPlayer {self.landlord_id} is the landlord.\033[0m')
+            if len(parts) > 1:
+                self.landlord_id = int(parts[1])
+                if self.landlord_id == self.player_id:
+                    print('\033[0;1;33m\nYou are the LANDLORD!\033[0m')
+                else:
+                    print(f'\033[0;33m\nPlayer {self.landlord_id} is the landlord.\033[0m')
+        
+        elif cmd == 'landlord_cards':
+            # 显示地主底牌
+            card_strs = parts[1:]
+            print('\033[0;1;33m\nLandlord cards: \033[0m', end='')
+            for cs in card_strs:
+                c = card(cs)
+                print(f'{c}{c.info()} ', end='')
+            print()
         
         elif cmd == 'your_cards':
             # 接收手牌
