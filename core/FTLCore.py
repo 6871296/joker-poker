@@ -302,7 +302,8 @@ def run(app:AppIO):
                 
                 # 解析输入
                 try:
-                    card_indices = [int(x) for x in user_input['cardIDs'] if x]
+                    # 注意：不能直接用 if x，因为0会被当成False过滤
+                    card_indices = [int(x) for x in user_input['cardIDs']]
                 except ValueError:
                     app.msg_cta({
                         'type':'card_play_echo',

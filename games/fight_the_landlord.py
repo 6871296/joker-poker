@@ -98,7 +98,8 @@ class LocalAppIO(AppIO):
         
         # 解析输入的牌索引
         try:
-            card_indices = [int(x) for x in user_input.split() if x]
+            # 注意：不能直接用 if x，因为0会被当成False过滤
+            card_indices = [int(x) for x in user_input.split()]
             return {
                 'type': 'player_play',
                 'cardIDs': card_indices
