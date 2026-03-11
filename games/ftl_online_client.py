@@ -322,7 +322,18 @@ def print_help():
   \033[0;33mshow\033[0m         - Show your cards again
 ''')
 
-
+def username_input():
+    username = input('Enter your name: ').strip()
+    if not username:
+        username = f'Player{hash(time.time()) % 100000}'
+    elif len(username)>=32:
+        print('\033[0;31mUsername too long! (Maximum 32 chars)\033[2J')
+        return username_input()
+    elif len(username)<1:
+        print('\033[0;31mUsername too short! (Minimum 1 char)\033[2J')
+        return username_input()
+    return username
+        
 def run():
     print('\033[2J\033[0m=== JOKER POKER - Fight The Landlord Client ===\n')
     
@@ -334,7 +345,7 @@ def run():
         print('\033[0;32mLocal server detected!\033[0m')
         host = '127.0.0.1'
     else:
-        print('\033[0;33mNo local server found.\033[0m')
+        #print('\033[0;33mNo local server found.\033[0m')
         local_ip = get_local_ip()
         host = input(f'Enter server IP (default {local_ip}): ').strip()
         if not host:
@@ -348,15 +359,15 @@ def run():
     if not client.connect(host, port):
         print('\033[0;31mFailed to connect. Exiting.\033[0m')
         return
-    print('\033[0;32mConnected!\033[0m\n')
+    print('\033[0;32mConnected!\033[0m')
+    time.sleep(1)
+    print('\033[2J')
     
     # 输入用户名
-    username = input('Enter your name: ').strip()
-    if not username:
-        username = f'Player{hash(time.time()) % 1000}'
+    username=username_input()
     
     # 选择加入方式
-    mode = input('Join as (p)layer or (s)pectator? [p]: ').strip().lower()
+    mode = input('\033[2JJoin as (p)layer or (s)pectator? [p]: ').strip().lower()
     as_spectator = mode == 's'
     
     # 加入游戏

@@ -362,12 +362,13 @@ def run():
     print(f'\n\033[0;32mStarting server on port {port} for {max_players} players...\033[0m')
     
     server = FTLServer(port=port, max_players=max_players)
-    print('\033[0;1;32mServer started!\033[0m')
-    print(f'LAN IP: \033[0;1m{get_local_ip()}')
+    print(f'LAN IP: \033[0;1m{get_local_ip()}\033[0m')
     print(f'Public IP: \033[0;1m{get_public_ip()}\033[0m')
     print('Share this to your friends to let them join!')
+    print('Run FTL Online Client on this computer will automatcally join this room.')
     print('Press ⌃C to quickly stop the server.')
     try:
+        print('\033[0;1;32mServer started!\033[0m')
         server.start()
     except KeyboardInterrupt:
         print('\n\033[0;33mShutting down server...\033[0m')

@@ -32,3 +32,6 @@ def get_public_ip():
         return None
     except Exception:
         return None
+
+if __name__=='__main__':
+    print(get_public_ip())
