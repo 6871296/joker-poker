@@ -157,7 +157,7 @@ def can_beat(ocset, last_cards):
         return False, f"Your card({ocset_main}) is not bigger than last card({last_main})!"
 
 def pcnt_i():
-    pcnt=int(input('Players count: '))
+    pcnt=int(input('Players count(Must be a mutiple of 3): '))
     if pcnt<=1:
         print('\033[0;31mToo low!\033[0m')
         sleep(1)
@@ -165,7 +165,7 @@ def pcnt_i():
         pcnt=pcnt_i()
     return pcnt
 def ccnt_i(pcnt):
-    ccnt=int(input('Cardset(s) count: '))
+    ccnt=int(input(f'Cardset(s) count(Must be a mutiple of {pcnt/3}): '))
     if ccnt<1:
         print('\033[0;31mToo low!\033[0m')
         sleep(1)
@@ -182,8 +182,6 @@ def ccnt_i(pcnt):
         print('\033[2J')
         ccnt=ccnt_i(pcnt)
     return ccnt
-def _pass():
-    pass
 class AppIO:
     '''AppIO基类 - 应用需要继承此类并重写方法'''
     def __init__(self, pcnt=3, ccnt=1):
