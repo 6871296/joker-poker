@@ -51,9 +51,9 @@ class LocalAppIO(AppIO):
             last_cards = msg['last_cards']
             cards = msg['cards']
             
-            # 显示轮到谁
+            # 显示轮到谁（用print而不是input，避免阻塞）
             color = "\033[0;1;35m" if player == 0 else "\033[0m"
-            input(f'{color}Player{player}, your turn!\033[0m')
+            print(f'\n{color}=== Player{player}\'s turn! ===\033[0m')
             
             # 显示上家出的牌
             if last_cards:

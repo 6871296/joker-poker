@@ -163,6 +163,8 @@ def pcnt_i():
         sleep(1)
         print('\033[2J')
         pcnt=pcnt_i()
+        
+        
     return pcnt
 def ccnt_i(pcnt):
     ccnt=int(input(f'Cardset(s) count(Must be a mutiple of {pcnt/3}): '))
@@ -372,8 +374,7 @@ def run(app:AppIO):
                     })
                     return
                 
-                sleep(1.5)
-                print('\033[2J')
+                sleep(0.5)
                 break
 
 if __name__ == '__main__':
