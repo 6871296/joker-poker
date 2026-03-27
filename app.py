@@ -23,7 +23,7 @@ while True:
     c = TerminalMenu(
         menu,
         title='Choose a game:',
-        menu_cursor="\033[0;32m ➤ \033[0;1;92m",
+        menu_cursor=" ➤ ",
     ).show()
 
     # 处理Quit选项

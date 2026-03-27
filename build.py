@@ -19,6 +19,9 @@ def clean_build():
             shutil.rmtree(dir_name)
             print(f"  Removed {dir_name}/")
     
+    # 确保必要的目录存在（即使它们被误删）
+    prepare_dirs()
+    
     for pattern in files_to_remove:
         for f in Path('.').glob(pattern):
             f.unlink()
@@ -47,11 +50,23 @@ def get_platform_options():
             'name': 'joker-poker'
         }
 
+def prepare_dirs():
+    """创建必要的目录"""
+    dirs = ['configs', 'core', 'games', 'lib']
+    for d in dirs:
+        if not os.path.exists(d):
+            os.makedirs(d, exist_ok=True)
+            print(f"  Created {d}/")
+
 def build_app():
     """使用 PyInstaller 打包"""
     print("=" * 50)
     print("Building JOKER POKER Application")
     print("=" * 50)
+    
+    # 创建必要的目录
+    print("Preparing directories...")
+    prepare_dirs()
     
     # 确保 PyInstaller 已安装
     try:
@@ -73,6 +88,7 @@ def build_app():
         '--noconfirm',                  # 不确认覆盖
         # 数据文件
         '--add-data=configs:configs',
+        '--add-data=core:core',
         '--add-data=games:games',
         '--add-data=lib:lib',
         # 隐藏的导入
@@ -87,6 +103,7 @@ def build_app():
         '--hidden-import=games.ftl_online_server',
         '--hidden-import=games.ftl_online_client',
         '--hidden-import=games.settings',
+        '--hidden-import=core.FTLCore',
         # 入口文件
         'app.py'
     ]
@@ -115,6 +132,10 @@ def build_directory_mode():
     print("Building JOKER POKER (Directory Mode)")
     print("=" * 50)
     
+    # 创建必要的目录
+    print("Preparing directories...")
+    prepare_dirs()
+    
     try:
         import PyInstaller
     except ImportError:
@@ -130,9 +151,11 @@ def build_directory_mode():
         '--clean',
         '--noconfirm',
         '--add-data=configs:configs',
+        '--add-data=core:core',
         '--add-data=games:games',
         '--add-data=lib:lib',
         '--hidden-import=simple_term_menu',
+        '--hidden-import=core.FTLCore',
         '--hidden-import=lib.cardclass',
         '--hidden-import=lib.cardset_class',
         '--hidden-import=lib.playerclass',
