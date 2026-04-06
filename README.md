@@ -1,4 +1,4 @@
-[English version is still in-progress]()
+[English version is still in-progress]
 
 **警告：此项目仍在开发中，不要在任何代码中依赖它。**
 # JOKER POKER
