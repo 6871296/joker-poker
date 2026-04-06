@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  job:
+  build-macos:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v5
@@ -14,3 +14,40 @@ jobs:
         cache: 'pip'
     - run: pip install --upgrade pip
     - run: python build.py
+    - uses: actions/upload-artifact@v4
+      with:
+        name: joker-poker-darwin
+        path: dist/JokerPoker
+        if-no-files-found: ignore
+        retention-days: 7
+  build-win:
+    runs-on: windows-latest
+    steps:
+        - uses: actions/checkout@v5
+        - uses: actions/setup-python@v5
+          with:
+            python-version: '3.12'
+            cache: 'pip'
+        - run: python build.py
+        - uses: actions/upload-artifact@v4
+          with:
+            name: joker-poker-win
+            path: dist/JokerPoker.exe
+            if-no-files-found: ignore
+            retention-days: 7
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v5
+        - uses: actions/setup-python@v5
+          with:
+            python-version: '3.12'
+            cache: 'pip'
+        - run: pip install --upgrade pip
+        - run: python build.py
+        - uses: actions/upload-artifact@v4
+          with:
+            name: joker-poker-linux
+            path: dist/joker-poker
+            if-no-files-found: ignore
+            retention-days: 7
