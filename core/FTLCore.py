@@ -94,8 +94,8 @@ def get_main_rank(cs, cs_type):
         for r, cnt in rank_counts.items():
             if cnt == 3:
                 return r
-    elif cs_type == cstype.BOMB:
-        # 炸弹：找出现4次的牌
+    elif cs_type in [cstype.BOMB, cstype.FOUR_AND_TWO_SINGLE, cstype.FOUR_AND_TWO_DOUBLE]:
+        # 炸弹/四带二：找出现4次的牌
         for r, cnt in rank_counts.items():
             if cnt == 4:
                 return r
@@ -130,18 +130,24 @@ def can_beat(ocset, last_cards):
     if last_type == cstype.JOKER_BOMB:
         return False, "JOKER_BOMB can only be beaten by JOKER_BOMB!"
     
-    # 如果出的是炸弹
+    # 如果出的是纯炸弹（4张）
     if ocset_type == cstype.BOMB:
-        # 上家不是炸弹，可以压
-        if last_type != cstype.BOMB:
-            return True, ""
-        # 上家也是炸弹，比较点数
-        ocset_main = get_main_rank(ocset, ocset_type)
-        last_main = get_main_rank(last_cards, last_type)
-        if ocset_main > last_main:
-            return True, ""
-        else:
-            return False, f"Your bomb({ocset_main}) is not bigger than last bomb({last_main})!"
+        # 上家不是炸弹（包括王炸、四带二、普通牌），纯炸弹可以压
+        if last_type == cstype.BOMB:
+            # 上家也是纯炸弹，比较点数
+            ocset_main = get_main_rank(ocset, ocset_type)
+            last_main = get_main_rank(last_cards, last_type)
+            if ocset_main > last_main:
+                return True, ""
+            else:
+                return False, f"Your bomb({ocset_main}) is not bigger than last bomb({last_main})!"
+        # 上家不是纯炸弹，纯炸弹可以压任何牌（包括四带二）
+        return True, ""
+    
+    # 如果出的是四带二，只能压同类型的四带二（不算炸弹）
+    if ocset_type in [cstype.FOUR_AND_TWO_SINGLE, cstype.FOUR_AND_TWO_DOUBLE]:
+        if last_type not in [cstype.FOUR_AND_TWO_SINGLE, cstype.FOUR_AND_TWO_DOUBLE]:
+            return False, "Four-and-two cannot beat other card types! (Only pure bomb can)"
     
     # 不是炸弹，牌型必须相同
     if ocset_type != last_type:

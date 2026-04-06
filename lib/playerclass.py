@@ -30,7 +30,7 @@ class Player:
             return False  # 上一手牌不合法，无法比较
         
         # 获取牌的点数（用于比较大小）- 使用与_cardset_class一致的斗地主点数
-        def get_rank_value(c):
+        def get_rank_ftl(c):
             """获取牌的斗地主点数数值，越大越强"""
             code = ord(str(c))
             if code == 0x1f0cf:
@@ -60,13 +60,13 @@ class Player:
         def is_bomb(cs):
             if len(cs.list) != 4:
                 return False
-            ranks = [get_rank_value(c) for c in cs.list]
+            ranks = [get_rank_ftl(c) for c in cs.list]
             # 王的点数是16(小王)和17(大王)，不可能是炸弹
             return len(set(ranks)) == 1 and ranks[0] < 16
         
         # 判断是否为双王（火箭/王炸）
         def is_rocket(cs):
-            ranks = sorted([get_rank_value(c) for c in cs.list])
+            ranks = sorted([get_rank_ftl(c) for c in cs.list])
             return ranks == [16, 17]  # 小王+大王
         
         last_is_bomb = is_bomb(last_play)
@@ -75,7 +75,7 @@ class Player:
         # 获取玩家手牌中每种点数的牌
         player_ranks = {}
         for c in self.cards:
-            rv = get_rank_value(c)
+            rv = get_rank_ftl(c)
             if rv not in player_ranks:
                 player_ranks[rv] = []
             player_ranks[rv].append(c)
@@ -90,16 +90,16 @@ class Player:
         
         # 如果上一手是炸弹，需要更大的炸弹或王炸
         if last_is_bomb:
-            last_bomb_rank = get_rank_value(last_play.list[0])
+            last_bomb_rank = get_rank_ftl(last_play.list[0])
             for rank, cards in player_ranks.items():
                 if len(cards) >= 4 and rank > last_bomb_rank:
                     return True
             return False
         
         # 普通牌型：需要同类型且点数更大，或者出炸弹/王炸
-        # 1. 先检查能否用炸弹压制
+        # 1. 先检查能否用纯炸弹（4张）压制（四带二不算炸弹）
         for rank, cards in player_ranks.items():
-            if len(cards) >= 4:
+            if len(cards) == 4:  # 只有纯四张才算炸弹
                 return True
         
         # 2. 分析上一手牌的主牌点数（对于三带一/三等）
@@ -107,7 +107,7 @@ class Player:
             """获取牌型中主要牌的点数"""
             rank_counts = {}
             for c in cs.list:
-                rv = get_rank_value(c)
+                rv = get_rank_ftl(c)
                 rank_counts[rv] = rank_counts.get(rv, 0) + 1
             
             if cs_type in [cstftl.THREE_BANDS_AND_SINGLE, cstftl.THREE_BANDS_AND_DOUBLE]:
@@ -116,7 +116,12 @@ class Player:
                     if count == 3:
                         return rv
             elif cs_type == cstftl.BOMB:
-                # 炸弹找出现4次的牌
+                # 纯炸弹找出现4次的牌
+                for rv, count in rank_counts.items():
+                    if count == 4:
+                        return rv
+            elif cs_type in [cstftl.FOUR_AND_TWO_SINGLE, cstftl.FOUR_AND_TWO_DOUBLE]:
+                # 四带二找出现4次的牌（不算炸弹，仅用于同类型比较）
                 for rv, count in rank_counts.items():
                     if count == 4:
                         return rv
