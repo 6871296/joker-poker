@@ -126,7 +126,7 @@ def run(app:AppIO):
     pcnt=app.pcnt
     ccnt=app.ccnt
     # 创建卡牌组（52张牌 -12张234 = 40张/副）
-    # 黑桃A-K, 红心A-K, 方块A-K, 梅花A-K, 大小王
+    # 黑桃A-K, 红心A-K, 方块A-K, 梅花A-K
     # 注意：去掉骑士牌 (🂬🂼🃌🃜) - 现代扑克不用
     card_chars = (
         '🂡🂥🂦🂧🂨🂩🂪🂫🂭🂮'    # 黑桃 A-K (10张，去掉🂬、2、3、4)
@@ -138,8 +138,120 @@ def run(app:AppIO):
     
     random.shuffle(cardset)
     
-    # 计算每人发牌数（除去3张底牌）
+    # 计算每人发牌数
     cards_for_players = ccnt * 40
     cpp = cards_for_players // pcnt  # cards per player
     
+    # 创建玩家
+    playerset = []
+    for i in range(pcnt):
+        start = i * cpp
+        end = start + cpp
+        player_cards = cardset[start:end]
+        player_cards = sort_cards(player_cards)
+        playerset.append(player(player_cards))
     
+    app.msg_cta({
+        'type':'start_game'
+    })
+    last_cards=None
+    consecutive_passes = 0
+    
+    while True:
+        for i in range(pcnt):
+            # 检查玩家是否还有牌
+            if len(playerset[i].cards) == 0:
+                app.msg_cta({
+                    'type':'player_win',
+                    'winner':i
+                })
+                return
+            
+            while True:
+                last_info = last_cards if last_cards else None
+                app.msg_cta({
+                    'type':'player_turn',
+                    'player':i,
+                    'last_cards':last_info,
+                    'cards':playerset[i].cards
+                })
+                
+                user_input = app.msg_atc()
+                if user_input['type']=='player_pass':
+                    sleep(1)
+                    consecutive_passes += 1
+                    if consecutive_passes >= pcnt - 1 and last_cards is not None:
+                        last_cards = None
+                        app.msg_cta({
+                            'type':'new_round',
+                        })
+                        sleep(1)
+                    break
+                
+                try:
+                    card_indices = [int(x) for x in user_input['cardIDs']]
+                except ValueError:
+                    app.msg_cta({
+                        'type':'card_play_echo',
+                        'message':'invalid_cardId'
+                    })
+                    continue
+                
+                if not card_indices:
+                    app.msg_cta({
+                        'type':'card_play_echo',
+                        'message':'no_card_selected'
+                    })
+                    continue
+                
+                if any(idx < 0 or idx >= len(playerset[i].cards) for idx in card_indices):
+                    app.msg_cta({
+                        'type':'card_play_echo',
+                        'message':'invalid_cardId'
+                    })
+                    continue
+                
+                selected_cards = [playerset[i].cards[idx] for idx in card_indices]
+                ocset = cset(selected_cards)
+                
+                if ocset.playable() == cstype.UNPLAYABLE:
+                    app.msg_cta({
+                        'type':'card_play_echo',
+                        'message':'invalid_cardset'
+                    })
+                    continue
+                
+                if last_cards is not None:
+                    can_beat_result = can_beat(ocset, last_cards)
+                    if not can_beat_result:
+                        app.msg_cta({
+                            'type':'card_play_echo',
+                            'message':'can\'t_beat',
+                            'cstype':ocset.playable(),
+                            'last_cstype':last_cards.playable(),
+                        })
+                        continue
+                
+                app.msg_cta({
+                    'type':'card_play_echo',
+                    'message':'success',
+                    'cstype':ocset.playable()
+                })
+                
+                for idx in sorted(card_indices, reverse=True):
+                    playerset[i].cards.pop(idx)
+                
+                playerset[i].cards = sort_cards(playerset[i].cards)
+                
+                last_cards = ocset
+                consecutive_passes = 0
+                
+                if len(playerset[i].cards) == 0:
+                    app.msg_cta({
+                        'type':'player_win',
+                        'winner':i
+                    })
+                    return
+                
+                sleep(0.5)
+                break

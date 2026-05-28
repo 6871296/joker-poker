@@ -30,7 +30,7 @@ class LocalAppIO(AppIO):
             }
 
 def run():
-    pcnt=pcnt_i
+    pcnt=pcnt_i()
     ccnt=ccnt_i(pcnt)
     core_run(LocalAppIO(pcnt,ccnt))
 

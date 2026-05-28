@@ -8,7 +8,7 @@ def NewUnoCardset():
     YELLOW = UnoColor.YELLOW
     GREEN  = UnoColor.GREEN
     BLUE   = UnoColor.BLUE
-    BLACK  = UnoColor.UNIVERSAL
+    BLACK  = UnoColor.BLACK
 
     colors = [
         RED,
