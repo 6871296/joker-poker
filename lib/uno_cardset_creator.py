@@ -38,7 +38,8 @@ def NewUnoCardset():
         for _ in range(4):
             uno_deck.append(UnoCard(BLACK,w))
 
-    for _ in range(4):
-        uno_deck.append(UnoCard(BLACK,'□'))
+    for _ in range(3):
+        uno_deck.append(UnoCard(BLACK,'✍'))
+    uno_deck.append(UnoCard(BLACK,'🙌'))
 
     return uno_deck

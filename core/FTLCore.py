@@ -6,6 +6,7 @@ from lib.cardclass import Card as card
 from lib.playerclass import Player as player
 from lib.cardset_class import Cardset_ftl as cset
 from lib.cardset_class import Cardset_type_ftl as cstype
+from lib.settings_reader import get as _get_setting
 import random
 
 '''
@@ -130,21 +131,29 @@ def can_beat(ocset, last_cards):
     if last_type == cstype.JOKER_BOMB:
         return False, "JOKER_BOMB can only be beaten by JOKER_BOMB!"
     
-    # 如果出的是纯炸弹（4张）
-    if ocset_type == cstype.BOMB:
-        # 上家不是炸弹（包括王炸、四带二、普通牌），纯炸弹可以压
-        if last_type == cstype.BOMB:
-            # 上家也是纯炸弹，比较点数
+    four_with_is_bomb = _get_setting('poker.fourWithIsBomb', False)
+
+    def _is_bomb_type(t):
+        if t == cstype.BOMB:
+            return True
+        if four_with_is_bomb and t in [cstype.FOUR_AND_TWO_SINGLE, cstype.FOUR_AND_TWO_DOUBLE]:
+            return True
+        return False
+
+    # 如果出的是炸弹类（纯炸弹，或四带二如果设置允许）
+    if _is_bomb_type(ocset_type):
+        if _is_bomb_type(last_type):
+            # 上家也是炸弹类，比较点数
             ocset_main = get_main_rank(ocset, ocset_type)
             last_main = get_main_rank(last_cards, last_type)
             if ocset_main > last_main:
                 return True, ""
             else:
-                return False, f"Your bomb({ocset_main}) is not bigger than last bomb({last_main})!"
-        # 上家不是纯炸弹，纯炸弹可以压任何牌（包括四带二）
+                return False, f"Your card({ocset_main}) is not bigger than last card({last_main})!"
+        # 上家不是炸弹类，炸弹类可以压任何牌
         return True, ""
-    
-    # 如果出的是四带二，只能压同类型的四带二（不算炸弹）
+
+    # 如果出的是四带二（且设置不允许算炸弹），只能压同类型的四带二
     if ocset_type in [cstype.FOUR_AND_TWO_SINGLE, cstype.FOUR_AND_TWO_DOUBLE]:
         if last_type not in [cstype.FOUR_AND_TWO_SINGLE, cstype.FOUR_AND_TWO_DOUBLE]:
             return False, "Four-and-two cannot beat other card types! (Only pure bomb can)"

@@ -1,4 +1,5 @@
 from .cardclass import Card as card
+from .settings_reader import get as _get_setting
 from typing import List
 from enum import Enum as enum
 
@@ -86,10 +87,6 @@ class Cardset_ftl:
             # 三带二
             if counts == [3, 2]:
                 return Cardset_type_ftl.THREE_BANDS_AND_DOUBLE
-            # 顺子 (5张连续，不能有2/小王/大王)
-            if (len(unique_ranks) == 5 and unique_ranks[-1] - unique_ranks[0] == 4 and
-                all(r <= 14 for r in unique_ranks)):  # A(14)是最大的允许值
-                return Cardset_type_ftl.STRAIGHT
             return Cardset_type_ftl.UNPLAYABLE
             
         elif len(self.list) == 6:
@@ -130,20 +127,21 @@ class Cardset_ftl:
             
         else:
             # 更多牌的情况
-            # 检查顺子（5张以上连续，无重复，不能有2/小王/大王）
-            if len(unique_ranks) == len(self.list) and len(self.list) >= 5:
-                if unique_ranks[-1] - unique_ranks[0] == len(self.list) - 1:
-                    # 顺子中最大的牌不能超过A(14)
-                    if unique_ranks[-1] <= 14:
-                        return Cardset_type_ftl.STRAIGHT
-            
+            straight_min = _get_setting('poker.cardsAStraightNeeds', 5)
+
+            # 检查顺子
+            if (len(unique_ranks) == len(self.list) and
+                len(self.list) >= straight_min and
+                unique_ranks[-1] - unique_ranks[0] == len(self.list) - 1):
+                if unique_ranks[-1] <= 14:
+                    return Cardset_type_ftl.STRAIGHT
+
             # 检查连对（3对以上连续的对子，不能有2/小王/大王）
             if all(c == 2 for c in counts) and len(counts) >= 3:
                 if unique_ranks[-1] - unique_ranks[0] == len(counts) - 1:
-                    # 连对中最大的牌不能超过A(14)
                     if unique_ranks[-1] <= 14:
                         return Cardset_type_ftl.DOUBLE_STRAIGHT
-            
+
             return Cardset_type_ftl.UNPLAYABLE
     
     def __str__(self):
@@ -211,16 +209,16 @@ class Cardset_cra:
                 return Cardset_type_cra.BOMB4
             return Cardset_type_cra.UNPLAYABLE
         else:
-            if len(unique_ranks) == len(self.list) and len(self.list) >= 5:
-                if unique_ranks[-1] - unique_ranks[0] == len(self.list) - 1:
-                    # 顺子中最大的牌不能超过A(14)
-                    if unique_ranks[-1] <= 14:
-                        return Cardset_type_cra.STRAIGHT
+            straight_min = _get_setting('poker.cardsAStraightNeeds', 5)
+            if (len(unique_ranks) == len(self.list) and
+                len(self.list) >= straight_min and
+                unique_ranks[-1] - unique_ranks[0] == len(self.list) - 1):
+                if unique_ranks[-1] <= 14:
+                    return Cardset_type_cra.STRAIGHT
             if all(c == 2 for c in counts) and len(counts) >= 3:
                 if unique_ranks[-1] - unique_ranks[0] == len(counts) - 1:
-                    # 连对中最大的牌不能超过A(14)
                     if unique_ranks[-1] <= 14:
-                        return Cardset_type_ftl.DOUBLE_STRAIGHT
+                        return Cardset_type_cra.DOUBLE_STRAIGHT
         return Cardset_type_cra.UNPLAYABLE
     def __str__(self):
         s=''

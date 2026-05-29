@@ -2,7 +2,7 @@ from enum import Enum as enum
 
 
 class UnoColor(enum):
-    BLACK='\033[0;1;40m'
+    BLACK='\033[0;1m'
     RED='\033[0;31m'
     BLUE='\033[0;34m'
     GREEN='\033[0;32m'
@@ -24,7 +24,7 @@ class UnoColor(enum):
     MUTE=' ⃠'
     WILD='❖'
     P4='+4'
-    DEF='✍'
+    CUSTOM='✍'
     HANDWASH='🙌'
 '''
 
@@ -101,5 +101,5 @@ class UnoConst(enum):
     
     WILD=UnoCard(UnoColor.BLACK,'❖')
     P4=UnoCard(UnoColor.BLACK,'+4')
-    DEF=UnoCard(UnoColor.BLACK,'✍')
+    CUSTOM=UnoCard(UnoColor.BLACK,'✍')
     HANDWASH=UnoCard(UnoColor.BLACK,'🙌')
