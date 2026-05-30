@@ -1,6 +1,6 @@
 # 优诺牌生成程序 🃏
 
-from unocard_class import *
+from lib.unocard_class import *
 
 def NewUnoCardset():
 
