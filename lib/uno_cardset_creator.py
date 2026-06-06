@@ -1,6 +1,6 @@
 # 优诺牌生成程序 🃏
 
-from unocard_class import *
+from lib.unocard_class import *
 
 def NewUnoCardset():
 
@@ -18,7 +18,7 @@ def NewUnoCardset():
     ]
 
     digits  = [str(i) for i in range(10)]
-    actions = ['  ⃠', '⇆', '+2']
+    actions = [' ⃠', '⇆', '+2']
     wilds   = ['❖', '+4']
 
     uno_deck = []

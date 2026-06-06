@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!python
 from lib.gameclass import Game as game
 from games.settings import run as settings_run
 from games.fight_the_landlord import run as ftl_run

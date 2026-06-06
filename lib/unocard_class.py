@@ -8,6 +8,9 @@ class UnoColor(enum):
     GREEN='\033[0;32m'
     YELLOW='\033[0;33m'
     
+    def __str__(self):
+        return self.value
+    
 '''
     0='0'
     1='1'
@@ -37,8 +40,9 @@ class UnoCard:
     def info(self):
         print(self.color+self.name)
         
-cardset=list[UnoCard]
-        
+from typing import List
+cardset=List[UnoCard]
+
 def playable(last:UnoCard,this:UnoCard)->bool:
     return this.color==UnoColor.BLACK or this.color==last.color or this.name==last.name
 

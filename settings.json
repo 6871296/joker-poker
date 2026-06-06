@@ -1,6 +1,7 @@
 {
     "poker.cardsAStraightNeeds":5,
     "poker.fourWithIsBomb":false,
+    "uno.reversePunishment":false,
     "uno.superposing":{
         "P2P2":true,
         "P2P4":true,

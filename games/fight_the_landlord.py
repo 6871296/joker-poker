@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.cardset_class import Cardset_type_ftl as cstype
+from lib.playerclass import Player as PlayerClass
 from core.FTLCore import run as core_run
 from core.FTLCore import AppIO, pcnt_i, ccnt_i
 
@@ -51,6 +52,12 @@ class LocalAppIO(AppIO):
             last_cards = msg['last_cards']
             cards = msg['cards']
             
+            # 判断是否完全无法出牌
+            can_afford = True
+            if last_cards is not None:
+                p = PlayerClass(cards)
+                can_afford = p.affordable_ftl(last_cards)
+            
             # 显示轮到谁（用print而不是input，避免阻塞）
             color = "\033[0;1;35m" if player == 0 else "\033[0m"
             print(f'\n{color}=== Player{player}\'s turn! ===\033[0m')
@@ -64,7 +71,10 @@ class LocalAppIO(AppIO):
             # 显示手牌
             print('\nYour cards:')
             for i, c in enumerate(cards):
-                print(f"{i}.  {c}{c.info()}")
+                if can_afford:
+                    print(f"{i}.  {c}{c.info()}")
+                else:
+                    print(f"\033[0;90m{i}.\033[0m  {c}{c.info()}")
                 
         elif msg_type == 'card_play_echo':
             message = msg.get('message')
