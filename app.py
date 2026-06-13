@@ -25,6 +25,7 @@ while True:
         menu_cursor=" ➤ ",
     ).show()
 
+    print('\033[2J')
     # 处理Quit选项
     if menu[c] == "Quit":
         break
@@ -36,5 +37,4 @@ while True:
         'UNO':game(uno_run,'uno')
     }
 
-    print('\033[2J')
     games[menu[c]].run()
